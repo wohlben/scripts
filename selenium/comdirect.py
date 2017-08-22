@@ -1,11 +1,11 @@
 import os
-
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from utils import DBConn
 
 user = os.environ['bid']
 password = os.environ['bpw']
-
+db = DBConn(namespace="comdirect")
 
 # force pdf downloads
 chrome_profile = webdriver.ChromeOptions()
@@ -42,9 +42,11 @@ if loginpage.text == "Ihr persönlicher Bereich":
 
     for element in news:
         if element.text.startswith("Finanzreport"):
-            url = element.find_element_by_xpath("..")
             print("Found {}".format(element.text))
-            url.click()
+            if db.has_entry(element.text) is None:
+                url = element.find_element_by_xpath("..")
+                url.click()
+                db.add_download(name=element.text, uri=url.get_property('href'))
 
     if len(news) > 0:
         print('marking everything as read')

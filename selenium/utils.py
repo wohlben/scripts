@@ -3,11 +3,8 @@ from sqlite3 import Error
 import time
 
 
-#("o2", name, url, )
-
-
 class DBConn(object):
-    def __init__(self, db_file='downloads.sqlite'):
+    def __init__(self, namespace, db_file='downloads.sqlite'):
         self.schema = """
             CREATE TABLE
             IF NOT EXISTS downloads (
@@ -18,6 +15,7 @@ class DBConn(object):
                 timestamp integer
             );
             """
+        self.namespace = namespace
         self.conn = self.create_connection(db_file)
         if self.conn is not None:
             self.create_table(self.conn, self.schema)
@@ -28,9 +26,9 @@ class DBConn(object):
         self.conn.close()
         return
 
-    def add_download(self, site, name, uri):
+    def add_download(self, name, uri):
         timestamp = int(time.time())
-        data = (site, name, uri, timestamp)
+        data = (self.namespace, name, uri, timestamp)
         statement = """
             INSERT INTO downloads(site, name, uri, timestamp) VALUES (?, ?, ?, ?);
         """
@@ -38,12 +36,12 @@ class DBConn(object):
         cur.execute(statement, data)
         return cur.lastrowid
 
-    def has_entry(self, site, name):
+    def has_entry(self, name):
         statement = """
             SELECT id FROM downloads WHERE site = ? and name = ?;
             """
         cur = self.conn.cursor()
-        cur.execute(statement, (site, name))
+        cur.execute(statement, (self.namespace, name))
         rows = cur.fetchall()
         if len(rows) > 0:
             return True

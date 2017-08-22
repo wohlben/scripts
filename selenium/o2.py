@@ -1,6 +1,6 @@
 import os
 from time import sleep
-from downloads_db import DBConn
+from utils import DBConn
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 
 user = os.environ['oid']
 password = os.environ['opw']
-db = DBConn()
+db = DBConn(namespace="o2")
 
 # force pdf downloads
 chrome_profile = webdriver.ChromeOptions()
@@ -50,11 +50,11 @@ if "o2 Login" in driver.title:
         date = element.find_element_by_xpath('div/div/span[not(contains(text(), "Aktuelle "))]')
         title = "Rechnung vom {}".format(date.text)
 
-        if db.has_entry(site="o2", name=title) is False:
+        if db.has_entry(name=title) is False:
             print("Found {}".format(title))
             url = element.find_element_by_xpath(".//a")
             url.click()
-            db.add_download(site="o2", name=title, uri=url.get_property('href'))
+            db.add_download(name=title, uri=url.get_property('href'))
 
     print('byebye')
     db.bye()
