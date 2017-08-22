@@ -66,8 +66,8 @@ class DBConn(object):
 
 
 if __name__ == '__main__':
-    db = DBConn()
-    db.add_download(site="test", name="testname", uri="random")
-    assert db.check_download(site="test2", name="bla") is False
-    assert db.check_download(site="test", name="testname") is True
+    db = DBConn(namespace="test")
+    db.add_download(name="name", uri="random")
+    assert db.check_download(name="bla") is False
+    assert db.check_download(name="name") is True
     db.bye()
