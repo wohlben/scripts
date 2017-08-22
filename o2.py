@@ -37,16 +37,12 @@ if "o2 Login" in driver.title:
     submit = driver.find_element_by_xpath('//button[@type="submit"]')
     submit.click()
 
-    sleep(5)
-    #try:
-    #    WebDriverWait(driver, 20)
-        # .until(EC.presence_of_element_located((By.XPATH('//h3[contains(text(), "Mein Tarif")]'))))
-    #    print('authentication successfull')
-    #except Exception:
-    #    driver.quit()
+    sleep(5)  # TODO: Fix it with wait until available...
 
     driver.get("https://www.o2online.de/ecare/?0&contentId=rechnung/uebersicht")
-    sleep(6)
+
+    sleep(6)  # TODO: Fix it with wait until available
+
     bills = driver.find_elements_by_xpath('//div[@class="panel panel-action"]')
     print("found {} news".format(len(bills)))
 
